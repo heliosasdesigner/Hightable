@@ -1,0 +1,117 @@
+{
+  "name": "hightable",
+  "version": "0.1.0",
+  "description": "Local desktop workbench for running Claude Code CLI and Codex CLI side by side.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heliosasdesigner/Hightable.git"
+  },
+  "type": "module",
+  "main": "dist-electron/main/main.js",
+  "scripts": {
+    "clean": "node -e \"const fs=require('node:fs');fs.rmSync('dist',{recursive:true,force:true});fs.rmSync('dist-electron',{recursive:true,force:true});fs.rmSync('release',{recursive:true,force:true})\"",
+    "dev": "npm run build:electron && npm run rebuild:electron && concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5300 && unset ELECTRON_RUN_AS_NODE && VITE_DEV_SERVER_URL=http://127.0.0.1:5300 electron dist-electron/main/main.js\"",
+    "dev:renderer": "vite --host 127.0.0.1",
+    "dev:electron": "npm run build:electron && unset ELECTRON_RUN_AS_NODE && VITE_DEV_SERVER_URL=http://127.0.0.1:5300 electron dist-electron/main/main.js",
+    "build": "npm run clean && npm run typecheck && npm run build:electron && vite build",
+    "build:electron": "tsc -p tsconfig.electron.json && node -e \"require('node:fs').writeFileSync('dist-electron/package.json', '{\\\"type\\\":\\\"commonjs\\\"}\\n')\"",
+    "package": "npm run build && electron-builder --mac",
+    "package:mac": "npm run build && electron-builder --mac",
+    "package:all": "npm run build && electron-builder -mwl",
+    "rebuild:native": "npm run rebuild:electron",
+    "rebuild:electron": "electron-rebuild -f -w better-sqlite3,node-pty",
+    "rebuild:node": "npm rebuild better-sqlite3 node-pty",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run rebuild:node --silent && vitest run"
+  },
+  "build": {
+    "appId": "com.hightable.app",
+    "productName": "Hightable",
+    "copyright": "Copyright © 2026 Hightable contributors",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "dist/renderer/**/*",
+      "assets/icon.png",
+      "assets/icon.icns",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**",
+      "**/node_modules/node-pty/**",
+      "**/node_modules/bindings/**",
+      "**/node_modules/file-uri-to-path/**"
+    ],
+    "npmRebuild": true,
+    "mac": {
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "icon": "assets/icon.icns",
+      "writeUpdateInfo": false
+    },
+    "win": {
+      "icon": "assets/icon.png",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development"
+    }
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/orbitron": "^5.2.8",
+    "@fontsource/roboto-slab": "^5.2.8",
+    "@fontsource/share-tech-mono": "^5.2.7",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "better-sqlite3": "^11.8.1",
+    "node-pty": "^1.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.2.1",
+    "electron": "^35.0.0",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2",
+    "vitest": "^3.0.8",
+    "wait-on": "^9.0.5"
+  }
+}

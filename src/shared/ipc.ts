@@ -1,0 +1,27 @@
+export const IpcChannels = {
+  CreateRoom: "hightable:room:create",
+  ListRooms: "hightable:room:list",
+  OpenRoom: "hightable:room:open",
+  GetRound: "hightable:round:get",
+  SearchTranscripts: "hightable:transcripts:search",
+  GetAgentUsage: "hightable:agent:get-usage",
+  SetAgentRateLimit: "hightable:agent:set-rate-limit",
+  ClearAgentRateLimit: "hightable:agent:clear-rate-limit",
+  AgentUsageUpdated: "hightable:agent:usage-updated",
+  PickDirectory: "hightable:dialog:pick-directory",
+  WriteTerminal: "hightable:terminal:write",
+  ResizeTerminal: "hightable:terminal:resize",
+  TerminalData: "hightable:terminal:data",
+  TerminalExit: "hightable:terminal:exit",
+  SendPrompt: "hightable:prompt:send",
+  MarkRoundComplete: "hightable:round:mark-complete",
+  PauseRound: "hightable:round:pause",
+  ExportRound: "hightable:round:export",
+  RestartTerminal: "hightable:terminal:restart",
+  SetRoomResumePolicy: "hightable:room:set-resume-policy",
+  ResetDatabase: "hightable:app:reset-database",
+  RoundUpdated: "hightable:round:updated",
+  RoundProgress: "hightable:round:progress",
+} as const;
+
+export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

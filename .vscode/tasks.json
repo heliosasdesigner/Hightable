@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build: electron main/preload",
+      "type": "shell",
+      "command": "${workspaceFolder}/node_modules/.bin/esbuild",
+      "args": [
+        "src/main/main.ts",
+        "src/preload/preload.ts",
+        "--bundle",
+        "--platform=node",
+        "--format=esm",
+        "--packages=external",
+        "--sourcemap",
+        "--outbase=src",
+        "--outdir=dist"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "vite: dev",
+      "type": "shell",
+      "command": "${workspaceFolder}/node_modules/.bin/vite",
+      "args": ["--host", "127.0.0.1", "--port", "5300", "--strictPort"],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^(.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Local:\\s+http://127\\.0\\.0\\.1:5300/"
+        }
+      }
+    },
+    {
+      "label": "desktop: prepare",
+      "dependsOrder": "sequence",
+      "dependsOn": ["build: electron main/preload", "vite: dev"],
+      "problemMatcher": []
+    }
+  ]
+}
